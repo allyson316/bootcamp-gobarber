@@ -1,1 +1,1 @@
-# bootcamp-gobarber
+# bootcamp-gobarber-api
