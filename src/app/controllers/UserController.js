@@ -3,6 +3,7 @@ import User from '../models/User';
 
 class UserController {
   async store(req, res) {
+    // validação dos dados com yup
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
@@ -13,15 +14,19 @@ class UserController {
         .min(6),
     });
 
+    // verifico se os dados foram validados
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Dados inválidos!' });
     }
+
+    // verifico se usuario já existe na base
     const userExists = await User.findOne({ where: { email: req.body.email } });
 
     if (userExists) {
       return res.status(400).json({ error: 'Usuário já cadastrado!' });
     }
 
+    // cadastro o usuário na base
     const { id, name, email, provider } = await User.create(req.body);
     return res.json({
       id,
@@ -32,6 +37,7 @@ class UserController {
   }
 
   async update(req, res) {
+    // validação dos dados com yup
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
@@ -46,10 +52,12 @@ class UserController {
       ),
     });
 
+    // verifico se os dados foram validados
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Dados inválidos!' });
     }
 
+    // verifico se o email que está sendo enviado é igual ao email na base
     const { email, oldPassword } = req.body;
     const user = await User.findByPk(req.userId);
 
@@ -63,10 +71,12 @@ class UserController {
       }
     }
 
+    // verifico se o email que foi enviado confere com o que está no banco
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       res.status(401).json({ error: 'Senha Atual incorreta!' });
     }
 
+    // altero o usuario na base
     const { id, name, provider } = await user.update(req.body);
     return res.json({
       id,
