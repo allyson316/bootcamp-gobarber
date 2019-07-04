@@ -5,6 +5,7 @@ import multerConfig from './config/multer';
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
+import ProviderController from './app/controllers/ProviderController';
 import authMiddleware from './app/middlewares/auth';
 
 const routes = new Router();
@@ -16,6 +17,7 @@ routes.post('/sessions', SessionController.store);
 // uso middleware de autenticação para rotas abaixo
 routes.use(authMiddleware);
 routes.put('/users', UserController.update);
+routes.get('/providers', ProviderController.index);
 
 // rota responsável por salvar um arquivo
 routes.post('/files', upload.single('file'), FileController.store);
