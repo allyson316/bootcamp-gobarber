@@ -47,15 +47,14 @@ class AppointmentController {
     const { provider_id, date } = req.body;
 
     /* checar se o provider_id passado é realmente um provider_id válido */
-    const isProvider = await User.findOne({
+    const checkIsProvider = await User.findOne({
       where: {
         id: provider_id,
         provider: true,
       },
     });
 
-    /* checar se a data passada não está no passado, ou seja é inválida para agendar */
-    if (!isProvider) {
+    if (!checkIsProvider) {
       return res
         .status(401)
         .json({ error: 'Você só pode criar agendamentos com provedores!' });
@@ -66,6 +65,13 @@ class AppointmentController {
       return res
         .status(400)
         .json({ error: 'Não é permitido selecionar hora no passado!' });
+    }
+
+    /* usuário que vai agendar não pode ser o mesmo que o provedor */
+    if (req.userId === provider_id) {
+      return res
+        .status(400)
+        .json({ error: 'Usuário que vai agendar não pode ser o provedor!' });
     }
 
     /* checar se já não existe um agendamento para a data passada */
