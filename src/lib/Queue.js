@@ -38,8 +38,12 @@ class Queue {
        * handle =  tarefa a ser processada na fila
        */
       const { bee, handle } = this.queues[job.key];
-      bee.process(handle);
+      bee.on('failed', this.handleFailure()).process(handle);
     });
+  }
+
+  handleFailure(job, err) {
+    console.log(`Queue ${job.queue.name}: FAILED`, err);
   }
 }
 export default new Queue();
