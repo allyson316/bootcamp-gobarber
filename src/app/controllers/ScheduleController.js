@@ -23,6 +23,7 @@ class ScheduleController {
         // listar agendamentos que estão entre o começo e o fim do date passado
         date: { [Op.between]: [startOfDay(parseDate), endOfDay(parseDate)] },
       },
+      include: [{ model: User, as: 'user', attributes: ['name'] }],
       order: ['date'],
     });
 
